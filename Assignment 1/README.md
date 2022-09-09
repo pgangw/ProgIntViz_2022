@@ -6,4 +6,4 @@ The attached visualization is an experimental scatter plot. This visualization w
 
 Here is an image of how that displays:
 
-![alt text](/Users/priyankagangwal/Desktop/Pratt files/Modules/SEM 3/Interactive Viz/Assignments/wk2-code/image.png "Image Title")
+<img width="515" alt="image" src="https://user-images.githubusercontent.com/102167360/189457242-a424dd04-d818-42dd-8dd6-566be8600dd2.png">
