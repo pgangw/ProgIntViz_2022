@@ -67,8 +67,8 @@
                 .attr("cy", function(d) {
                     return d[1];
                 })//(a required circle value, and a function of what it returns)  // Hint: we want to return d[] with the y value of the array 
-                .attr('r', 2)         // .attr() //(another required circle value, and a number: try 10)
-                .attr('fill', 'maroon')
+                .attr('r', 7)         // .attr() //(another required circle value, and a number: try 10)
+                .attr('fill', 'orange')
   	            .attr('opacity', 0.7);        // .attr(); //optional: change the color of the circles 
 
             
@@ -88,7 +88,23 @@
             //5. Add data labels 
             //NOTE: This will rely on much of the same code we have used in our SVG example. 
             
-            
+            svg.selectAll("text")
+            .data(dataset)
+            .enter()
+            .append("text")
+            .text(function(d) {
+                return d[0] + "," + d[1];
+            }) //we want the text to return the data values
+            .attr("x", function(d) {
+                return d[0];
+            }) //we want to give the text an x value, use what you used above, mind the difference between circle text properties 
+            .attr("y", function(d) {
+                return d[1];
+            })
+            .attr("font-family", "sans-serif")
+            .attr("font-size", "11px")
+            .attr("fill", "maroon");
+
             // TODO: svg.selectAll()
             //      .data()
             //      .enter()
