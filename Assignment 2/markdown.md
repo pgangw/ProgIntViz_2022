@@ -13,5 +13,5 @@ The visual represents the percentage of sugar in total calories of different cer
 The X-axis shows the name of the cereal while the Y-axis represents the percentage of sugar. 
 
 Below is a screenshot of the visual:
-![image] (/Users/priyankagangwal/Desktop/Pratt files/Modules/SEM 3/Interactive Viz/Repo/ProgIntViz_2022/Assignment 2/3image.png)
 
+<img width="1266" alt="3image" src="https://user-images.githubusercontent.com/102167360/190815899-42db3275-e9be-4c60-bd33-fa1e8500061b.png">
