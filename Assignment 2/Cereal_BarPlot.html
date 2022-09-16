@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Cerel Bar Chart Homework</title>
+        <script type="text/javascript" src= "https://d3js.org/d3.v7.min.js"></script>
+        <style type="text/css">
+            /*TBD*/
+        </style>
+    </head>
+    <body>
+        <script type="text/javascript">
+                
+        //const dataset;
+        const margin = 185;
+        const width = 1500; 
+        const height = 700;   
+        
+        //get the data
+        d3.csv("cereal.csv").then(dataset => {
+        //format data
+        dataset.forEach(d => { 
+            d.name = d.name;
+            d.persugarincal = +d.persugarincal; 
+        });
+
+
+    //     dataset.sort(function(b, a) {
+    // return a.Value - b.Value;
+    //  });
+
+        const maxY = d3.max(dataset, d => d.persugarincal);
+
+        const xScale = d3.scaleBand()
+                        .domain(dataset.map(d => d.name))
+                        .range([margin, width - margin])
+                        .paddingInner(.2);
+        
+        const yScale = d3.scaleLinear()
+                        .domain([0, maxY]) 
+                        .range([height - margin, margin]);
+        
+        const bottomAxis = d3.axisBottom().scale(xScale);
+        const leftAxis = d3.axisLeft().scale(yScale);
+
+        //Create our SVG element
+        const svg = d3.select("body")
+                    .append("svg")
+                    .style('background-color', '#f1faee')
+                    .attr("width", width)
+                    .attr("height", height);
+
+        //Make bars and append data
+        svg.selectAll("rect") 
+            .data(dataset) 
+            .enter()
+            .append("rect")
+            .attr("x", d => xScale(d.name)) 
+            .attr("y", d => yScale(d.persugarincal)) 
+            .attr("width", xScale.bandwidth())
+            .attr("fill", "#a8dadc")
+            .attr("height", d => (height-margin) - yScale(d.persugarincal));
+
+
+
+        //Implementing the bottom axis
+        svg.append("g")
+             .attr("transform", "translate(0," + (height - margin) + ")") 
+             .call(bottomAxis)
+            .selectAll("text")
+             .attr("y", 0)
+             .attr("x", 9)
+             .attr("dy", ".35em")
+             .attr("transform", "rotate(-90)")
+             .attr("dx", "-2em")
+             .attr("dy", ".25em")
+             .style("font-family", "roboto")
+             .style("color", "#1d3557")
+             .style("text-anchor", "end"); 
+
+
+        //Implementing the left axis
+        svg.append("g")
+            .attr("transform", "translate(" + margin + ",1)")
+            .style("font-family", "roboto")
+            .style("color", "#1d3557")
+            .call(leftAxis); 
+
+        svg.append("text")
+            .attr("x", width / 45 + margin)
+            .attr("y", 90)
+            .attr("text-anchor", "center")
+            .style("text-decoration", "underline")  
+            .style("font-size", "20px") 
+            .style("font-family", "roboto")
+            .style("fill", "#1d3557")            
+            .text("Percentage of Sugar in Cereals' Overall Calories");   
+            
+        svg.append("text")
+            .attr('x', -(height / 4) - margin)
+            .attr('y', margin / 1.4)
+            .attr('transform', 'rotate(-90)')
+            .attr('text-anchor', 'middle')
+            .style("font-family", "roboto")
+            .style("fill", "#1d3557")  
+            .text("Ratio of sugar and calories");  
+         
+        //annotations
+
+        // const annotations = [
+        // {
+        // note: {
+        // label: "Thanks to its marketing policy, in 2021 France has reached the third position.",
+        // title: "France product sales",
+        // wrap: 20,  // try something smaller to see text split in several lines
+        // padding: 50   // More = text lower
+      
+        // },
+        //  color: ["#cc0000"],
+        //  x: x(2500),
+        //  y: 100,
+        //  dy: 100,
+        //  dx: 100
+        //  }]
+
+        // const makeAnnotations = d3.annotation()
+        //  .annotations(annotations)
+        //  svg.append("g")
+        //  .call(makeAnnotations)
+
+            
+        // svg.append("text")
+        //     .attr("transform", "translate(" + (w/1) + " ," + (h-10) + ")")
+        //     .style("text-anchor", "middle")
+        //     .text("Cereal");   
+        
+    //     data.sort(function(b, a) {
+    // return a.Value - b.Value;
+    //  });
+        console.log(dataset);
+        
+    });
+        </script>
+    </body>
+</html>
