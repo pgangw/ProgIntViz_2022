@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Salary to buy homes in 2020</title>
+        <script src= "https://d3js.org/d3.v7.min.js"></script>
+        <style type="text/css"> 
+
+        	svg{
+            width:1400px;
+            height:2500px;
+          }
+
+          .title {
+            font-size: 20px;
+            font-weight: bold;
+            font-family: Helvetica;
+          }
+
+          .para {
+            font-size: 16px;
+            font-weight: normal;
+            font-family: Helvetica;
+          }
+          .labels{
+            font-size: 15px;
+            font-weight: normal;
+            font-family: Helvetica;
+          }
+        
+
+        </style>
+    </head>
+    <body>
+         <svg></svg>
+
+        <script type="text/javascript">
+       
+//Adding the dataset below 
+//Data retrieved from Statista: https://www-statista-com.ezproxy.pratt.edu/statistics/1235757/salary-needed-to-buy-median-priced-home-usa-by-metro/
+
+      d3.csv("salary.csv").then(dataset => {  
+
+        //formatting the data 
+        dataset.forEach(d => {
+            d.City = d.City;
+            console.log(d.City);
+            d.Salary = +d.Salary.replace(",", "");
+        });
+
+        //Color using salary min and max 
+        const maxData = d3.max(dataset, d=>d.Salary);
+        const minData = d3.min(dataset, d=>d.Salary);
+        const myColor = d3.scaleLinear()
+                          .domain([minData, maxData])
+                          .range(["#F3D5B5", "#583101"]);//Using a brown gradient retrieved from Coolors
+        // Tried using a 4-class colour
+        //                   .domain([minData, maxData])
+        //                   .range(["#264653","#e9c46a", "#e76f51"]);//Using a 4-class coolors palette generator 
+    
+        //Drawn with d3.line()                 
+        const houseGenerator = d3.line();
+        
+
+        //Drawing the house
+        const house_points = [ "M200,100 L100,175 125,175 125,275 150,275 150,225 C155,212 175,200 196,222 L196,275 200,275 275,275 275,175 300,175 260,142.5 260,120 235,120 235,131.5 200,100" 
+            // [200,100],
+            // [100,175],
+            // [125,175],
+            // [125,275],
+            // [150,275],
+            // [150,225],
+            // [155,215],
+            // [175,200],
+            // [195,219.5],
+            // [200,275],
+            // [200,275],
+            // [275,275],
+            // [275,175],
+            // [300,175],
+            // [260,142.5],
+            // [260,120],
+            // [235,120],
+            // [235,131.5],
+            // [200,100]
+        ];
+
+
+        const pathString = houseGenerator(house_points);
+        const perRow = 5;
+        const size = 220;
+        const sizeY = 230;
+
+        const svg = d3.select("svg");
+
+        //Making groups
+        const g = svg.selectAll("g")
+                      .data(dataset)
+                      .enter()
+                      .append("g")
+                      .attr("transform", (d,i)=>{
+                        const x = (i % perRow + 0.1) * size;
+                        const y = (Math.floor(i/perRow)+0.25) * sizeY;
+                        return "translate(" + [x,y] + ")";})
+
+        g.append("path")
+         .attr("d", house_points)
+         .attr("fill", d=> myColor(d.Salary))
+         .attr("stroke-width", "1px");
+
+        //Making the Labels
+        g.append("text")
+          .attr("x", size - 22) 
+          .attr("y", size + 70) 
+          .attr("text-anchor", "middle")  
+          .attr("dx", "2px")
+          .attr("dy", "5px") 
+          .attr("class","labels")
+          .attr("fill", "#583101")
+          .text(d=>d.City);  
+
+        g.append("text")
+          .attr("x", size - 22) 
+          .attr("y", size + 87) 
+          .attr("text-anchor", "middle")  
+          .attr("dx", "2px")
+          .attr("dy", "5px") 
+          .attr("class","labels")
+          .attr("fill", "#583101")
+          .text(d=>d.Salary + " USD");    
+          
+        //Making the Title 
+        svg.append("text")
+           .attr("x", 650) 
+           .attr("y", 50) 
+           .attr("text-anchor", "middle") 
+           .attr("fill", "#583101")
+           .attr("class", "title")
+           .text("Annual salary needed to buy a median priced home in the United States' largest metros in 2020"); //the text 
+
+        //Making the short descriptions 
+        svg.append("text")  
+           .attr("x", 650) 
+           .attr("y", 80)  
+           .attr("text-anchor", "middle") 
+           .attr("fill", "#583101")
+           .attr("class", "para")
+           .text("The below infographic shows the salary needed in some of the largest metropolitan areas in the US to afford a home.");
+
+        svg.append("text")  
+           .attr("x", 650) 
+           .attr("y", 100)  
+           .attr("text-anchor", "middle") 
+           .attr("fill", "#583101")
+           .attr("class", "para")
+           .text("The darker shade of brown, the higher would be the salary amount.");
+           
+   
+        });
+        
+
+        </script>
+    </body>
+</html>
