@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>NYC Bar Chart</title>
+        <script src= "https://d3js.org/d3.v7.min.js"></script>
+        <style type="text/css">
+            
+        .title {
+            font-size: 18px;
+            font-weight: bold;
+            font-family: sans-serif;
+          }
+
+        .label{
+            font-size: 15px;
+            font-weight: normal;
+            font-family: sans-serif;
+          }
+
+        .description {
+            font-size: 15px;
+            font-weight: normal;
+            font-family: sans-serif;
+        }
+
+        .source {
+            font-size: 10px;
+            font-weight: normal;
+            font-family: sans-serif;
+            font-style: italic;
+        }
+
+        .def {
+            font-size: 10px;
+            font-weight: bold;
+            font-family: sans-serif;
+        }
+        .bars.opt1 {
+        	fill: #5e3c99;
+          }
+
+        .bars.opt2 {
+        	fill: url(#diagonalHatch);
+
+        }
+
+        .bars.opt3 {
+        	fill: #e66101;
+          }
+
+        </style>
+    </head>
+    <body>
+    <div id="vis"></div>
+        <svg width="0" height="0">
+            <defs>
+        <pattern id="diagonalHatch" width="10" height="10" patternTransform="rotate(45 20 0)" patternUnits="userSpaceOnUse">
+            <rect fill="#b2abd2" x="0" y="0" width="10" height="10"></rect>
+            <line x1="0" y1="0" x2="0" y2="10" style="stroke:#5e3c99; stroke-width:2" />
+          </pattern></defs></svg>  
+        
+
+    <script type="text/javascript">
+
+                
+                const margin = 90; 
+                const width = 1300; 
+                const height = 500;                
+
+                d3.csv("nydata.csv").then(dataset => {
+
+        dataset.forEach(d => { 
+            d.year = d.year;
+            d.unemploymentrate = +d.unemploymentrate; 
+        });
+
+                const maxY = d3.max(dataset, d => +d.unemploymentrate);
+
+                const xScale = d3.scaleBand()
+                                 .domain(dataset.map(d => d.year))
+                                 .range([margin, width - margin])
+                                 .paddingInner(.03);
+                
+                const yScale = d3.scaleLinear()
+                                 .domain([0, 10]) 
+                                 .range([height - margin, margin]);
+                
+                const bottomAxis = d3.axisBottom()
+                                     .scale(xScale);
+                
+                const leftAxis = d3.axisLeft()
+                                   .scale(yScale);
+
+               //Alt text  
+               const svg = d3.select("#vis")
+                             .append("svg")
+                             .style('background-color', '#fef0d9')
+                             .attr("width", width)
+                             .attr("height", height)
+                             .attr("role","img")
+                             .attr("aria-labelledby", "title desc");
+
+                svg.append("title")
+                   .text("A Bar Chart representing unemployment rates in NYC between 1992-2021. Fill is dependent on whether the rate is below 5%, above 5% or above 8%. The visual shows that the rate was high in 2020 (9.9%), 199 (8.7%) and between 2009 and 2012 (fluctuating between 8.3% - 8.7%). The rate was the lowest in 2019 (3.9%).")
+                   .attr("id", "title")//the IDs can be anything 
+
+            // /*SVG <desc> 
+                svg.append("desc")
+                   .text("A Bar Chart representing unemployment rates in NYC between 1992-2021. Fill is dependent on whether the rate is below 5%, above 5% or above 8%. The visual shows that the rate was high in 2020 (9.9%), 199 (8.7%) and between 2009 and 2012 (fluctuating between 8.3% - 8.7%). The rate was the lowest in 2019 (3.9%).")
+                   .attr("id", "desc")
+
+            //Making bars and appending data
+                svg.selectAll(".bars") 
+                   .data(dataset) 
+                   .enter()
+                   .append("rect")
+                //    .attr("class", d => +d.unemploymentrate > 9 < 5 ? "bars opt3" : "bars opt2" : "bars opt1") trying diff functions
+                   .attr("class", d => d.unemploymentrate < 5 ? "bars opt2" : d.unemploymentrate > 8 ? "bars opt3" : "bars opt1") 
+                   .attr("x", d => xScale(d.year)) 
+                   .attr("y", d => yScale(+d.unemploymentrate)) 
+                   .attr("width", xScale.bandwidth())  
+                   .attr("height", d => (height-margin) - yScale(+d.unemploymentrate));
+
+            //Implementing the bottom axis
+                svg.append("g")
+                   .attr("transform", "translate(0," + (height - margin) + ")") 
+                   .attr("font-weight", "bold")
+                   .call(bottomAxis); 
+
+            //Implementing the left axis
+                 svg.append("g")
+                    .attr("transform", "translate(" + margin + ",0)")
+                    .attr("font-weight", "bold")
+                    .call(leftAxis); 
+
+            //Adding the chart title
+                svg.append("text")
+                   .attr("x", width/2) 
+                   .attr("y", 30) 
+                   .attr("text-anchor", "middle") 
+                   .attr("fill", "black")
+                   .attr("class", "title")
+                   .text("Unemployment rate in New York City between 1992-2021.");  
+               
+            //Add additional explanatory text
+                svg.append("text")
+                    .attr("x", width/2) 
+                    .attr("y", 50) 
+                    .attr("text-anchor", "middle") 
+                    .attr("fill", "black")
+                    .attr("class", "description")
+                    .text("Orange and purple fills represent uneployment rates above 8% and 5% respectively. Hatched fill represents an uneployment rate below 5%.");
+                    
+                svg.append("text")
+                    .attr("x", width/2) 
+                    .attr("y", 70) 
+                    .attr("text-anchor", "middle") 
+                    .attr("fill", "black")
+                    .attr("class", "description")
+                    .text("It can be noticed that the unemployment rate was the highest in 2020 and in the post-recession years (that is, after 2009). 2019 had the lowest unemployment rate of 3.8%.");      
+
+                 svg.append("text")
+                    .attr("x", width/2) 
+                    .attr("y", 495) 
+                    .attr("text-anchor", "middle") 
+                    .attr("fill", "black")
+                    .attr("class", "source")
+                    .text("This is a classroom assignment and the data is sourced from Statista: https://www-statista-com.ezproxy.pratt.edu/statistics/190697/unemployment-rate-in-new-york-since-1992/");  
+
+                svg.append("text")
+                    .attr("x", width/2) 
+                    .attr("y", 475) 
+                    .attr("text-anchor", "middle") 
+                    .attr("fill", "black")
+                    .attr("class", "def")
+                    .text("Unemployment rate is defined as the share of workers in the labor force who are not working but are looking for work."); //the text 
+
+            //Adding y-axis label
+            	svg.append("text")
+            	   .attr("x", -height/2)
+            	   .attr("y", 55)
+            	   .attr("text-anchor", "middle")
+            	   .attr("transform", "rotate(-90)")
+            	   .attr("fill", "black")
+                   .attr("class", "label")
+                   .text("Unemployment rate (in percentage)"); 
+                
+             //Adding x-axis label
+                svg.append("text")
+            	   .attr("x", width/2)
+            	   .attr("y", 455)
+            	   .attr("text-anchor", "middle")
+            	   .attr("fill", "black")
+                   .attr("class", "label")
+                   .text("Year"); 
+
+
+                });  
+        </script>
+    </body>
+</html>
