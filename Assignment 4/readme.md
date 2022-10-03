@@ -19,7 +19,7 @@ The following elements were used to improve the accessibility of the visualizati
 - The colors are colorblind safe. The pallete was chosen from [Color Brewer](https://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3). The palette ensures not using the "stop light" color palette whilst maintaining adequate contrast of 8.59:1.
 - The visual is described using plain language. The definition of unemployment rate, the data source, color descriptions and key inferences have been mentioned in the visualization. 
 - The alt text of the visualization is mentioned in detail. 
-- The visual makes use of not just colors, but also a svg pattern for easily understanding.
+- The visual makes use of not just colors, but also a svg pattern for easy understanding.
 - The visual was tested using Chrome's accessibility checking extension - Wave Evaluation Tool.
 
 <img width="1345" alt="Screenshot2" src="https://user-images.githubusercontent.com/102167360/193602559-bc51263b-b692-4786-80ae-d02c4eb3566e.png">
