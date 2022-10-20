@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Salary to buy homes in 2020</title>
+        <script src= "https://d3js.org/d3.v7.min.js"></script>
+        <style type="text/css"> 
+
+        	svg{
+            width:1400px;
+            height:2500px;
+          }
+
+          .title {
+            font-size: 20px;
+            font-weight: bold;
+            font-family: Helvetica;
+          }
+
+          .para {
+            font-size: 16px;
+            font-weight: normal;
+            font-family: Helvetica;
+          }
+
+          .labels{
+            font-size: 15px;
+            font-weight: normal;
+            font-family: Helvetica;
+          }
+ 
+        /*styling the button*/
+          button{
+            background-color: #f6e5d8; 
+            color: #583101; 
+            font-family: Helvetica;
+            font-size: 1em;
+            border-color: #583101;
+            border-radius: 5px;
+            box-shadow: none;
+            display: inline-block;
+            text-align: center;
+            position: absolute;
+            left: 500px;
+            top: 130px;
+          }
+ 
+        /*styling the tooltip*/
+           #tooltip{
+            position: absolute;
+            width: auto;
+            height: auto;
+            padding: 2px;    
+            text-align: center; 
+            font-family:sans-serif;
+            font-size: 12px;
+            font-weight: 550;
+            background: rgb(238, 221, 205);
+            -webkit-text-fill-color: #583101; 
+            border-radius: 8px;
+          }
+        </style>
+    </head>
+    <body>
+         <button>Click to sort the data in descending order</button>
+         <svg></svg>
+
+        <script type="text/javascript">
+       
+//Adding the dataset below 
+//Data retrieved from Statista: https://www-statista-com.ezproxy.pratt.edu/statistics/1235757/salary-needed-to-buy-median-priced-home-usa-by-metro/
+
+      d3.csv("salary.csv").then(dataset => {  
+
+        //formatting the data 
+        dataset.forEach(d => {
+            d.City = d.City;
+            console.log(d.City);
+            d.Salary = +d.Salary.replace(",", "");
+        });
+
+        //Color using salary min and max 
+        const maxData = d3.max(dataset, d=>d.Salary);
+        const minData = d3.min(dataset, d=>d.Salary);
+        const myColor = d3.scaleLinear()
+                          .domain([minData, maxData])
+                          .range(["#F3D5B5", "#583101"]);//Using a brown gradient retrieved from Coolors
+
+        //Drawn with d3.line()                 
+        const houseGenerator = d3.line();
+        
+
+        //Drawing the house
+        const house_points = [ "M200,100 L100,175 125,175 125,275 150,275 150,225 C155,212 175,200 196,222 L196,275 200,275 275,275 275,175 300,175 260,142.5 260,120 235,120 235,131.5 200,100" 
+
+        ];
+
+
+        const pathString = houseGenerator(house_points);
+        const perRow = 5;
+        const size = 220;
+        const sizeY = 260;
+
+        const svg = d3.select("svg");
+
+        //Making groups
+        const g = svg.selectAll("g")
+                      .data(dataset)
+                      .enter()
+                      .append("g")
+                      .attr("transform", (d,i)=>{
+                        const x = (i % perRow + 0.1) * size;
+                        const y = (Math.floor(i/perRow)+0.35) * sizeY;
+                        return "translate(" + [x,y] + ")";})
+
+        //tooltip (positioned outside of SVG)
+        const tooltip =d3.select("body")
+                         .append("div")
+                         .attr("id", "tooltip")
+                         .style("opacity", 1);
+
+        g.append("path")
+         .attr("d", house_points)
+         .attr("fill", d=> myColor(d.Salary))
+         .attr("stroke-width", "1px")
+         .on("mouseover", (event, d)=> {
+             d3.select("#tooltip")
+               .transition()
+               .duration(600)
+               .style("opacity", 1)
+               .style("left", (event.pageX + 2) + "px")//x coordinate of mouse
+               .style("top", (event.pageY + 2) + "px")//y coordinate of mouse
+        tooltip.html("City: " + "<br>" + d.City + "<br>" + "<br>" + "Salary: " + "<br>" + "$" + d.Salary);//setting the html here for the <br>
+            })     
+          .on("mouseout", (event, d)=>{
+            d3.select("#tooltip")
+              .transition()
+              .style("opacity", 0);
+            })
+          .on("mousemove", (event, d) =>{
+            d3.select("#tooltip")
+              .style("left", (event.pageX + 2) + "px")
+              .style("top", (event.pageY + 2) + "px")
+
+          });
+ 
+          //Button feature
+            d3.select("button")
+            .on("click", (event,d)=> {
+    
+            svg.selectAll("path")
+               .data(dataset.sort((a,b)=>d3.descending(a.Salary, b.Salary)))
+               .transition()
+               .duration(2000)
+               .attr("fill", d=> myColor(d.Salary));
+
+              console.log(dataset);
+
+          });
+
+          
+        //Making the Title 
+        svg.append("text")
+           .attr("x", 650) 
+           .attr("y", 50) 
+           .attr("text-anchor", "middle") 
+           .attr("fill", "#583101")
+           .attr("class", "title")
+           .text("Annual salary needed to buy a median priced home in the United States' largest metros in 2020"); //the text 
+
+        //Making the short descriptions 
+        svg.append("text")  
+           .attr("x", 650) 
+           .attr("y", 80)  
+           .attr("text-anchor", "middle") 
+           .attr("fill", "#583101")
+           .attr("class", "para")
+           .text("The below infographic shows the salary needed in some of the largest metropolitan areas in the US to afford a home.");
+
+        svg.append("text")  
+           .attr("x", 650) 
+           .attr("y", 100)  
+           .attr("text-anchor", "middle") 
+           .attr("fill", "#583101")
+           .attr("class", "para")
+           .text("The darker shade of brown, the higher would be the salary amount.");
+
+
+        });
+        
+
+        </script>
+    </body>
+</html>
