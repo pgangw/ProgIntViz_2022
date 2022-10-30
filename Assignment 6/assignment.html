@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Homelessness by disasters</title>
+        <script src= "https://d3js.org/d3.v7.min.js"></script>
+        <style type="text/css">
+
+        .title {
+            font-size: 13px;
+            font-weight: bold;
+            font-family: sans-serif;
+          }
+
+        .description {
+            font-size: 10px;
+            font-weight: normal;
+            font-family: sans-serif;
+        }
+        </style>
+    </head>
+    <body>
+        <svg width="600" height="600"></svg>  
+      
+    <script type="text/javascript">    
+
+            d3.csv("homeless.csv").then(dataset => {
+
+            
+            dataset.forEach(d => { 
+            d.Year = d.Year;
+            d.Earthquakes = +d.Earthquakes; 
+            d.Floods = +d.Floods; 
+            d.Storms = +d.Storms; 
+            d.Landslides = +d.Landslides; 
+            d.Wildfires = +d.Wildfires; 
+            });
+
+            //Setting svg params  
+            const svg = d3.select("svg");
+            const w = 500;
+            const h = 500;
+            const myColor = d3.scaleOrdinal(d3.schemeDark2);
+            const xmargin = 70; 
+            const ymargin = 60; 
+
+            //Stack layout params
+            const stack = d3.stack()
+                            .keys(["Earthquakes", "Floods", "Storms", "Landslides", "Wildfires"]);
+                            //.keys(["food", "utilities", "rent", "other"]);
+                            //.keys(["utilities", "food"]);
+                            //.order(d3.stackOrderDescending);
+                            //.order(d3.stackOrderAscending); 
+
+            //Stacking the data
+            const series = stack(dataset);
+
+            console.log(series); 
+            console.log(stack);
+            console.log(dataset.length)
+            
+
+            //Setting up the barchart scales 
+            const xScale = d3.scaleBand()
+                             .domain(dataset.map(d => d.Year))
+                             .range([xmargin, w - xmargin])
+                             .paddingInner(0.05);
+
+            const yScale = d3.scaleLinear()
+                             .domain([0, d3.max(dataset, d => d.Earthquakes + d.Floods + d.Storms + d.Landslides + d.Wildfires)])
+                             .range([h - ymargin, ymargin]);
+
+            const bottomAxis = d3.axisBottom()
+                                     .scale(xScale);
+                
+            const leftAxis = d3.axisLeft()
+                                   .scale(yScale);                 
+            
+            //Making the data groups
+            const groups = svg.selectAll("g")
+                              .data(series)
+                              .enter()
+                              .append("g")
+                              .style("fill", (d,i)=> myColor(i)
+                              );
+            
+
+            //Making the rects
+            const bars = groups.selectAll("rect")
+                               .data(d=>d)
+                               .enter()
+                               .append("rect")
+                               .attr("x", (d,i) => xScale(d.data.Year))
+                               .attr("y", d => yScale(d[1])) 
+                               .attr("height", d=> yScale(d[0])-yScale(d[1]))
+                               .attr("width", xScale.bandwidth());
+
+            //Implementing the bottom axis
+            svg.append("g")
+                   .attr("transform", "translate(0," + (h - ymargin) + ")") 
+                   .attr("font-weight", "bold")
+                   .call(bottomAxis); 
+
+            //Implementing the left axis
+            svg.append("g")
+                    .attr("transform", "translate(" + xmargin + ",0)")
+                    .attr("font-weight", "bold")
+                    .call(leftAxis); 
+
+            //Adding the chart title
+            svg.append("text")
+                   .attr("x", w/2) 
+                   .attr("y", 30) 
+                   .attr("text-anchor", "middle") 
+                   .attr("fill", "black")
+                   .attr("class", "title")
+                   .text("The number of people left homeless due to natural disasters across the world"); 
+                   
+            svg.append("text")
+              .attr("x", w/2) 
+              .attr("y", 47) 
+              .attr("text-anchor", "middle") 
+              .attr("fill", "black")
+              .attr("class", "description")
+              .text("Purple = Storms, Orange = Floods, Pink = Landslides, Dark Green = Earthquakes, Light Green = Wildfires");      
+            });
+        </script>
+    </body>
+</html>
