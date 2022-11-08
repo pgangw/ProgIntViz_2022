@@ -2,7 +2,7 @@
 
 This visualization was created as part of a classroom assignment. The goal of the assignment is to learn creating **network charts** using D3. 
 
-## Data Source
+## Data source
 
 The data on US airports and the frequency of flights between them were downloaded from [Kateto.net](https://kateto.net/polnet2018). The dataset is used for classroom purposes only. 
 
