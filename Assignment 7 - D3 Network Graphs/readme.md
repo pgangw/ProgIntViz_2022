@@ -8,7 +8,7 @@ The data on US airports and the frequency of flights between them were downloade
 
 ***The dataset is not uploaded in this repository to prevent it from being downloaded from here.*** 
 
-## Visual Findings
+## Visual findings
 
 It can be seen that the Seattle, Detroit, Newark and Houston aiport are some of the most busy airports in terms of domestic connectivity. 
 
