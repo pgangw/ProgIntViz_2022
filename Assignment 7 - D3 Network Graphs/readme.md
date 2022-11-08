@@ -25,9 +25,11 @@ https://user-images.githubusercontent.com/102167360/200470667-a677da67-3e45-42b2
 
 ## High resolution images of the visual 
 Zoomed out view:
+
 <img width="760" alt="Screen Shot 2022-11-07 at 10 49 41 PM" src="https://user-images.githubusercontent.com/102167360/200470866-92721ab4-54da-42cb-bd6d-35cbfabe519e.png">
 
 Zoomed in view:
+
 <img width="1311" alt="Screen Shot 2022-11-07 at 10 36 23 PM" src="https://user-images.githubusercontent.com/102167360/200470804-618ca1ad-d207-4081-a871-17cd88d437ee.png">
 
 <img width="1311" alt="Screen Shot 2022-11-07 at 10 37 15 PM" src="https://user-images.githubusercontent.com/102167360/200470824-75f43fca-b197-4e04-8cc9-7d0b4d03e956.png">
